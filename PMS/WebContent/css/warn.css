@@ -1,0 +1,29 @@
+@CHARSET "UTF-8";
+.font-local{
+	color: #9F9F9F;
+	size: auto;
+}
+.font-get{
+	color: #08c;
+	size: auto;
+}
+.done {
+background: #99CC33;
+color: #fff;
+display: inline-block;
+font-weight: bold;
+height: 20px;
+text-align: center;
+vertical-align: middle;
+width: 20px;
+}
+.waiting {
+background: #0089c8;
+color: #fff;
+display: inline-block;
+font-weight: bold;
+height: 20px;
+text-align: center;
+vertical-align: middle;
+width: 20px;
+}

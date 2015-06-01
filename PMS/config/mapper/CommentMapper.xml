@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gx.ibatis.mapper.CommentMapper" >
+  
+  	<insert id="sendCommentInfo">
+		INSERT INTO comment(
+			source_id,
+			state,
+			recipient_id
+		)VALUES(
+			#{rid,jdbcType=INTEGER}, 
+			#{state},
+			#{recipient_id,jdbcType=INTEGER}
+			
+		)
+	</insert>
+	
+	<resultMap type="Comment" id="commentResult">
+		<id column="id" property="id"/>
+		<association column="source_id" property="reply" select="getReply">
+			<id column="id" property="id"/>
+		</association>
+	</resultMap>
+	
+	<select id="getReply" parameterType="Integer" resultType="Reply">
+		select * from reply where id=#{id}
+	</select>
+	
+	<select id="getCommentInfo" parameterType="Integer" resultMap="commentResult">
+		select * from comment where state=0 and recipient_id=#{userId}
+	</select>
+	
+	<select id="getCommentsCount" parameterType="Integer" resultType="int">
+		select count(*) from comment where recipient_id=#{userId}
+	</select>
+	
+	<select id="getCommentInfoByIndex" resultMap="commentResult">
+		select * from comment where recipient_id=#{userId} limit #{beginIndex},#{pageSize}
+	</select>
+	
+	<update id="updateCommentState" parameterType="Integer">
+		update comment set state=1 where id=#{id}
+	</update>
+	
+</mapper>

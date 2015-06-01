@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gx.ibatis.mapper.DepartmentMapper" >
+  
+  	<insert id="addDepartment" parameterType="Department">
+		INSERT INTO department(
+			name,
+			description,
+			pid
+		)VALUES(
+			#{name,jdbcType=VARCHAR}, 
+			#{description,jdbcType=VARCHAR},
+			<choose>
+				<when test="parent!=null">
+					#{parent.id,jdbcType=INTEGER}
+				</when>
+				<otherwise>
+					null
+				</otherwise>
+			</choose>
+		)
+	</insert>
+	
+	<resultMap type="Department" id="departmentResult">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="description" property="description"/>
+		<association column="pid" property="parent" select="getDepartment">
+			<id column="id" property="id"/>
+			<result column="name" property="name"/>
+			<result column="description" property="description"/>
+		</association>
+	</resultMap>
+	
+	<select id="getDepartment" parameterType="Integer" resultType="Department">
+		select * from department where id=#{id}
+	</select>
+	
+	<select id="getDepartments" resultMap="departmentResult">
+		select * from department
+	</select>
+	
+	<select id="getDepartmentsByPid" parameterType="Integer" resultType="Department">
+		select * from department where pid=#{pid}
+	</select>
+	
+	<select id="getTopList" resultType="Department">
+		select * from department where pid is null
+	</select> 
+	
+	<select id="getDepartmentById" parameterType="Integer" resultMap="departmentResult">
+		select * from department where id=#{id}
+	</select>
+	
+	<update id="updateDepartment" parameterType="Department">
+    	UPDATE department SET name = #{name}, 
+    	<if test="parent!=null">
+    		pid=#{parent.id},
+    	</if>
+    	description = #{description}
+    	 where id=#{id}
+    </update> 
+</mapper>

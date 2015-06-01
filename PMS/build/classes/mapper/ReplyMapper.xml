@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gx.ibatis.mapper.ReplyMapper" >
+	
+	<resultMap type="Reply" id="replyMap">
+  		<id column="id" property="id"/>
+  		<result column="replytime" property="replytime"/>
+  		<result column="handle" property="handle"/>
+  		<result column="myfile" property="myfile"/>
+  		<association property="replyPerson" column="replyperson" select="selectUser">
+  			<id column="replyperson" property="id"/>
+  			<result column="username" property="username"/>
+  		</association>
+  		<association property="warning" column="warn_id" select="selectWarn">
+  			<id column="warn_id" property="id"/>
+  			<result column="title" property="title"/>
+			<result column="starttime" property="starttime"/>
+			<result column="urgent" property="urgent"/>
+			<result column="description" property="description"/>
+			<result column="state" property="state"/>
+			<result column="image" property="image"/>
+			<result column="browsenumber" property="browseNumber"/>
+  		</association>
+  		<association property="parentReply" column="pid" select="selectParentReply">
+  			<id column="pid" property="id"/>
+  			<result column="title" property="title"/>
+  			<result column="handle" property="handle"/>
+  		</association>
+  	</resultMap>
+	<resultMap type="Reply" id="replyResult">
+  		<id column="id" property="id"/>
+  		<result column="replytime" property="replytime"/>
+  		<result column="handle" property="handle"/>
+  		<association property="replyPerson" column="replyperson" select="selectUser">
+  			<id column="replyperson" property="id"/>
+  			<result column="username" property="username"/>
+  		</association>
+  	</resultMap>
+  
+  <select id="selectUser" resultType="User">
+  	select * from user where id=#{id}
+  </select>
+  
+  <select id="selectWarn" resultType="Warning">
+  	select * from warning where id=#{id}
+  </select>
+  
+  <select id="selectParentReply" resultType="Reply">
+  	select * from reply where id=#{id}
+  </select>
+  
+  <select id="findReplyCount" parameterType="Integer" resultType="int">
+  	select count(*) from reply where replyperson=#{userId} and warn_id is not null
+  </select>
+  
+  <select id="findPageReply" parameterType="Integer" resultMap="replyMap">
+  	select r.*,w.starttime from reply r inner join warning w on r.warn_id=w.id where replyperson=#{userId} and warn_id is not null order by w.starttime desc limit #{beginIndex},#{pageSize}
+  </select>
+  
+  <select id="getCommentsByPid" parameterType="Integer" resultMap="replyResult">
+  	select *  from reply r where r.pid=#{pid} order by replytime asc
+  </select>
+  
+  <delete id="deleteReply" parameterType="Integer">
+  		
+  		delete from reply where id=#{id}
+  </delete>
+
+  <select id="selectReplyList" parameterType="Integer" resultMap="replyMap">
+		SELECT r.id,r.replytime,r.handle,r.warn_id,r.myfile,r.replyperson FROM REPLY 
+			r inner join warning w on r.id=w.bestreply where w.bestreply is not null
+			 order by replytime asc
+  </select>
+  
+   <select id="findReplyById" parameterType="Integer" resultMap="replyMap">
+		SELECT * FROM REPLY WHERE ID=#{id}
+  </select>
+  
+  
+  <select id="selectReplyByWarnId"  parameterType="Integer" resultMap="replyMap">
+		SELECT * FROM REPLY WHERE warn_id=#{wid}  ORDER BY replytime  asc 
+  </select>
+  
+  <insert id="saveinfo" parameterType="Reply">
+	INSERT INTO REPLY(
+		replytime,
+		handle, 
+		myfile,
+		replyperson,
+		warn_id,
+		pid
+	)VALUES(
+		#{replytime,jdbcType=VARCHAR}, 
+		#{handle,jdbcType=VARCHAR}, 
+		#{myfile,jdbcType=VARCHAR}, 
+		#{replyPerson.id,jdbcType=INTEGER},
+		<choose>
+			<when test="warning!=null">#{warning.id,jdbcType=INTEGER},</when>
+			<otherwise>null,</otherwise>
+		</choose>
+		
+		<choose>
+			<when test="parentReply!=null">#{parentReply.id,jdbcType=INTEGER}</when>
+			<otherwise>null</otherwise>
+		</choose>
+	)
+	<selectKey resultType="Integer" keyProperty="id" order="AFTER">  
+      SELECT LAST_INSERT_ID() AS ID  
+	</selectKey>
+</insert>
+
+</mapper>

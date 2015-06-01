@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gx.ibatis.mapper.DemandMapper" >
+	
+	<resultMap type="Demand" id="getDemand">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="starttime" property="starttime"/>
+		<result column="updatetime" property="updatetime"/>
+		<result column="content" property="content"/>
+		<association column="applicant" property="applicant" select="selectApplicant">
+			<id column="applicant" property="id"/>
+			<result column="username" property="username"/>
+		</association>
+		<association column="appointperson" property="appointPerson" select="selectAppointperson">
+			<id column="appointperson" property="id"/>
+			<result column="username" property="username"/>
+		</association>
+		<association column="project" property="project" select="selectProject">
+			<id column="project" property="id"/>
+			<result column="projectname" property="projectName"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectApplicant" parameterType="Integer" resultType="User">
+		select * from user where id=#{id}
+	</select>
+	<select id="selectAppointperson" parameterType="Integer" resultType="User">
+		select * from user where id=#{id}
+	</select>
+	
+	<select id="demandList" resultType="Demand">
+		select * from demand
+	</select>
+	
+	<select id="selectProject" parameterType="Integer" resultType="Project">
+		select * from project where id=#{id}
+	</select>
+	
+	<select id="getDemands" parameterType="Integer" resultMap="getDemand">
+		select * from demand where project=#{projectId} order by starttime DESC
+	</select>
+	
+	<update id="updateDemand" parameterType="Demand">
+		update demand set title=#{title}, updatetime=#{updatetime}, content=#{content}, appointperson=#{appointPerson.id}
+	</update>
+	  
+  <insert id="addDemand" parameterType="Demand">
+		INSERT INTO DEMAND(
+			TITLE,
+			applicant,
+			starttime,
+			updatetime, 
+			content,
+			appointperson,
+			project
+		)VALUES(
+			#{title,jdbcType=VARCHAR}, 
+			#{applicant.id,jdbcType=INTEGER}, 
+			#{starttime,jdbcType=VARCHAR}, 
+			#{starttime,jdbcType=VARCHAR}, 
+			#{content,jdbcType=VARCHAR}, 
+			#{appointPerson.id,jdbcType=INTEGER},
+			#{project.id,jdbcType=INTEGER}
+		)
+		
+	<selectKey resultType="Integer" keyProperty="id" order="AFTER">  
+      SELECT LAST_INSERT_ID() AS ID  
+	</selectKey>
+	</insert> 
+</mapper>

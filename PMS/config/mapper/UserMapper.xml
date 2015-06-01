@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gx.ibatis.mapper.UserMapper" >
+
+	<resultMap type="User" id="userResult">
+		<id column="id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="password" property="password"/>
+		<result column="sex" property="sex"/>
+		<result column="phone" property="phone"/>
+		<result column="email" property="email"/>
+		<result column="image" property="image"/>
+		<result column="description" property="description"/>
+		<association column="depart_id" property="department" select="getDepart">
+			<id column="depart_id" property="id"/>
+			<result column="name" property="name"/>
+			<result column="description" property="description"/>
+			<association property="parent" column="pid" select="getParent"></association>
+		</association>
+		<association column="roleId" property="role" select="getRole">
+			<id column="depart_id" property="id"/>
+			<result column="name" property="name"/>
+			<result column="description" property="description"/>
+		</association>
+	</resultMap>
+	
+	<resultMap type="Warning" id="warnResult">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="starttime" property="starttime"/>
+		<result column="urgent" property="urgent"/>
+		<result column="description" property="description"/>
+		<result column="state" property="state"/>
+		<result column="image" property="image"/>
+		<result column="browsenumber" property="browseNumber"/>
+		<association property="applicant" column="applicant" select="selectUserById">
+			<id column="applicant" property="id"/>
+			<result column="image" property="image"/>
+		</association>
+		<association property="bestreply" column="bestreply" select="selectReplyById">
+			<id column="applicant" property="id"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectReplyById" parameterType="Integer" resultType="Reply">
+		select * from reply where id=#{id}
+	</select>
+	
+	<select id="selectUserById" parameterType="Integer" resultType="User">
+		select * from user where id=#{id}
+	</select>
+	
+	<select id="getParent" parameterType="Integer" resultType="Department">
+		select * from where id=#{id}
+	</select>
+	
+	<select id="getDepart" resultType="Department">
+		select * from department where id=#{id}
+	</select>
+	
+	<select id="getRole" resultType="Role">
+		select * from role where id=#{id}
+	</select>
+	
+	<select id="findWarnCount" resultType="int">
+		select count(*) from warning where applicant=#{id}
+	</select>
+	
+	<select id="findPageWarn" resultMap="warnResult">
+		select * from warning where applicant=#{id} order by starttime DESC limit #{beginIndex},#{pageSize}
+	</select>
+	
+	<select id="findUsers" resultMap="userResult">
+		select * from user
+	</select>
+
+  <select id="selectUserByUsername" parameterType="String" resultMap="userResult">
+		SELECT * FROM user WHERE USERNAME=#{username}
+  </select>
+  
+  <select id="findUserById" parameterType="Integer" resultMap="userResult">
+  	select * from user where id=#{id}
+  </select>
+  
+  <delete id="deleteUserById" parameterType="Integer">
+  	delete from user where id=#{userId}
+  </delete>
+  
+  <update id="settingImage" parameterType="User">
+  	update user set image=#{image} where id=#{id}
+  </update>
+  
+  <update id="updatePassword" parameterType="String">
+    	UPDATE user SET password = #{password} WHERE USERNAME = #{username}
+  </update>
+  
+  <select id="getMembers" parameterType="Integer" resultType="User">
+  	select * from user where depart_id=#{departmentId}  
+  </select>
+  
+  <update id="updateUser" parameterType="User">
+  	update user set
+  			<if test="sex!=null">
+  				 sex=#{sex},
+  			</if>
+  			<if test="phone!=null">
+  				  phone=#{phone},
+  			</if>
+  			<if test="image!=null">
+  				 image=#{image},
+  			</if>
+  			<if test="email!=null">
+  				 email=#{email},
+  			</if>
+  			description=#{description} where id=#{id}
+  </update>
+  
+  <update id="assignGuest" parameterType="User">
+  	update user set
+  			<if test="role!=null">
+  				roleId=#{role.id}
+  			</if>
+  			where id=#{id}
+  </update>
+  
+  <update id="assignUser" parameterType="User">
+  	update user set
+  			<if test="role!=null">
+  				roleId=#{role.id},
+  			</if>
+  			<if test="department!=null">
+  				depart_id=#{department.id}
+  			</if>
+  			where id=#{id}
+  </update>
+  
+  <insert id="addUser" parameterType="User">
+  		insert into user(
+			username,
+			password, 
+			email,
+			image			
+		)VALUES(
+			#{username,jdbcType=VARCHAR}, 
+			#{password,jdbcType=VARCHAR}, 
+			#{email,jdbcType=VARCHAR},
+			#{image,jdbcType=VARCHAR}
+		)
+		
+	<selectKey resultType="int" keyProperty="id" order="AFTER">  
+      SELECT LAST_INSERT_ID() AS ID  
+	</selectKey>
+  </insert>
+  
+</mapper>

@@ -1,0 +1,38 @@
+*{margin :0px; padding:0px; }
+.context{ overflow:auto; width:100%; height:100%; font-family:Microsoft YaHei; }
+img { border:0px; }
+ul{ list-style-type: none;}
+a:link,a:visited{ text-decoration:none; color:black; margin: 0px; padding: 0px; }
+.header_softcall{ width:100%; height:70px; margin:0px auto; background-color:#29A7E1; display: block; }
+.logo{ float:left; width: 10%;}
+.logo:hover{ background-color:#29A7E1; }
+.logo a{ display:block; width: 100%; height: 100%; margin:0px; padding:0px; }
+.logo a img{ border:0px; margin-top:8px; margin-left:3px; padding:0px; width: 136px; height: 40px; text-align:center; }
+.softcall{ float:left; cursor:pointer; width: 80%; line-height:60px; }
+.softcall .softcall_title{ float:left; cursor:pointer; line-height:60px; width:100px; text-align:center;}
+.softcall  .softcall_title div{ width:100px; height:70px; }
+.softcall  .softcall_title div img{ margin: 0px; padding:0px; width:50px; height:60px; }
+.softcall .softcall_title:hover{ background-color:#0000FF;}
+.softcall .softcall_title:hover div{ font-weight: bold;}
+.softcall .softcall_img{ margin-left: 5px; margin-top: 5px;clear:both;}
+.softcall .softcall_title ul{ background-color:menu; display:none; width:98px; z-index:9999; position:absolute; border-left:1px solid #3366CC; border-right:1px solid #3366CC;  border-bottom:1px solid #3366CC;text-align: center;}
+.softcall .softcall_title ul li{margin: 0px; padding: 0px;clear:both;}
+.softcall .softcall_title ul li .text{width:90%; border:1px solid black; float:left; margin-top: 5px;margin-bottom: 5px; color:red; height:20px;font-size: 15px;}
+.softcall .softcall_title ul li a{ display:block; line-height:30px; }
+.softcall .softcall_title:hover ul{ display:block; }
+.softcall .softcall_title ul li:hover{ background-color:#0000FF; font-weight: bold;}
+.user{float:right; width: 10%; }
+.user .user_title{ float:right; cursor:pointer; line-height:70px; text-align: center; width:110px; }
+.user .user_title:hover{ background-color:#0089C8; }
+.user .user_title div{ width:110px; height:70px; }
+.user .user_title div img{ margin-top: 10px; padding:0px; width:40px; height:40px; }
+.user .user_title ul{ background-color:menu; display:none; width:108px;  line-height:30px; z-index:9999; position:absolute; border-left:1px solid #3366CC; border-right:1px solid #3366CC; border-bottom:1px solid #3366CC; }
+.user .user_title:hover ul{ display:block; }
+.user .user_title ul li a{ display:block; line-height:30px; }
+.user .user_title ul li:hover{ background-color:#0089C8; font-weight: bold;}
+.messageBox{ border:1px solid #3366CC; background-color:#fff; width:230px; height:120px; position: absolute; z-index:100; right: 5px; bottom:0px; }
+.messageBox .message_Title{ height:24px; line-height:24px; background-color:#3366CC; color:#000; }
+.messageBox .message_Title a{cursor:pointer; float:right; color:#000; }
+.messageBox .message_Title a:hover{ font-weight: bold; }
+.messageBox .message_body{ width:100%; height:90px; text-align: center; }
+.messageBox .message_body a{ width:100%; line-height: 90px; }

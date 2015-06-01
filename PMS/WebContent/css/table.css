@@ -1,0 +1,11 @@
+@CHARSET "UTF-8";
+.tableClass{
+	margin-top: 5px;	
+}
+.td1{
+	text-align: center;
+	font-size: large;
+}
+.td2{
+	font-size: small;
+}

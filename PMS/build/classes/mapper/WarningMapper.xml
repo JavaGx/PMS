@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gx.ibatis.mapper.WarningMapper" >
+	
+	<resultMap type="Warning" id="warnResult">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="starttime" property="starttime"/>
+		<result column="urgent" property="urgent"/>
+		<result column="description" property="description"/>
+		<result column="state" property="state"/>
+		<result column="image" property="image"/>
+		<result column="browsenumber" property="browseNumber"/>
+		<association property="applicant" column="applicant" select="selectUserById">
+			<id column="applicant" property="id"/>
+			<result column="image" property="image"/>
+		</association>
+		<association property="bestreply" column="bestreply" select="selectReplyById">
+			<id column="applicant" property="id"/>
+		</association>
+	</resultMap>
+	
+	
+	<select id="selectReplyById" parameterType="Integer" resultType="Reply">
+		select * from reply where id=#{id}
+	</select>
+	
+	<select id="selectUserById" parameterType="Integer" resultType="User">
+		select * from user where id=#{id}
+	</select>
+	
+	<select id="finsPageWarnings" parameterType="int" resultMap="warnResult">
+		select * from warning order by starttime DESC limit #{beginIndex},#{pageSize}
+	</select>
+  
+	<select id="findWarnCount"  resultType="int">
+		select count(*) from warning
+	</select>
+	
+	<select id="selectWarning" parameterType="String" resultMap="warnResult">
+		select * from warning where state!=#{state} order by starttime DESC
+	</select>
+	
+  <select id="selectoneWarning" parameterType="Integer" resultMap="warnResult">
+		SELECT * FROM Warning WHERE	ID=#{id} order by starttime DESC	
+  </select>
+  
+  <update id="updateWarningState" parameterType="Integer">
+    	UPDATE warning SET state ='已查看' WHERE ID = #{id} AND  state ='未处理'
+  </update>
+  
+  <update id="addBrowseNumber" parameterType="Integer">
+    	update warning set browsenumber=browsenumber+1 where id= #{id}
+  </update>
+  
+  <update id="updateBestReply" parameterType="Integer">
+  	update warning set bestreply=null where bestreply=#{rid}
+  </update>
+  
+  <update id="replyWarning" parameterType="Integer">
+    	UPDATE Warning SET state ='已回复' WHERE ID = #{id}
+  </update>
+  
+  <update id="bestReply" parameterType="Integer">
+  		update warning set bestreply=#{rid}, state='已解决' where id=#{wid}
+  </update>
+  
+   <update id="closeWarning" parameterType="Integer">
+    	UPDATE Warning SET state ='已关闭' WHERE ID = #{id} 
+  </update>
+  
+  <update id="updateWarn" parameterType="Warning">
+    	UPDATE warning SET TITLE=#{title},URGENT=#{urgent},
+    	<if test="image!=null and image!=''">
+    		image=#{image},
+    	</if>
+    	description=#{description} WHERE ID = #{id} 
+  </update>
+  
+    <insert id="saveWarning" parameterType="Warning">
+		INSERT INTO Warning(
+			TITLE,
+			STARTTIME,
+			URGENT, 
+			STATE,
+			description,
+			applicant,
+			IMAGE
+		)VALUES(
+			#{title,jdbcType=VARCHAR}, 
+			#{starttime,jdbcType=VARCHAR}, 
+			#{urgent,jdbcType=VARCHAR}, 
+			#{state,jdbcType=VARCHAR}, 
+			#{description,jdbcType=VARCHAR},
+			#{applicant.id,jdbcType=INTEGER},
+			#{image,jdbcType=VARCHAR}
+		)
+ 	<selectKey resultType="Integer" keyProperty="id" order="AFTER">  
+      	SELECT LAST_INSERT_ID() AS ID  
+	</selectKey>
+</insert> 
+</mapper>

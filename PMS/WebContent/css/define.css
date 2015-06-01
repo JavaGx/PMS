@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+/* a:hover{
+	text-decoration: underline;
+	color: #08c;
+}
+ */
+a.tip{
+    color:red;
+    text-decoration:none;
+    position:relative;
+}
+a.tip span{display:none};
+a.tip:hover{cursor:hand;}
+a.tip:hover .popbox {
+    display:block;
+    position:absolute;
+    top:15px;
+    left:-30px;
+    width:100px;
+    background-color:#424242;
+    color:#fff;
+    padding:10px;
+}
